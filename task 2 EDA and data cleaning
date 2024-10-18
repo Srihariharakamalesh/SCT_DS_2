@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+task = pd.read_csv('titanic.csv')
+task.head()
+
+task.isnull()
+
+sns.heatmap(task.isnull(),yticklabels=False,cbar=True)
+
+sns.set_style('dark')
+sns.countplot(x='Survived',hue='Embarked',data=task)
+
+sns.distplot(task['Age'].dropna(),kde=False,bins=50)
+
+plt.figure(figsize=(12,7))
+sns.boxplot(x='Pclass',y='Age',data=task)
+
+def impute_age(cols):
+    Age = cols[0]
+    Pclass = cols[1]
+    
+    if pd.isnull(Age):
+        
+        if Pclass==1:
+            return 38
+        elif Pclass==2:
+            return 29
+        else: 
+            return 23
+        
+    else:
+        return Age
+task['Age']=task[['Age','Pclass']].apply(impute_age,axis=1)
+sns.heatmap(task.isnull(),yticklabels=False,cbar=True)
+
+task.drop('Cabin',axis=1,inplace=True)
+task.head()
+
+sns.heatmap(task.isnull(),yticklabels=False,cbar=True)
